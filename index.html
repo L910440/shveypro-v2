@@ -213,9 +213,6 @@
     mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%),
       linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     mask-composite: intersect;
-    transform: translateZ(0);
-    will-change: transform;
-    backface-visibility: hidden;
   }
 
   /* Языковой оверлей на промо-видео: подменяет вшитый в кадр русский текст для EN/PT,
@@ -228,8 +225,6 @@
     mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%),
       linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     mask-composite: intersect;
-    transform: translateZ(0);
-    will-change: transform;
   }
   .video-i18n-overlay.is-active { display: block; }
   .vo-scene {
@@ -663,7 +658,7 @@
         id="hero-video"
         src="assets/video/shveypro-promo.mp4"
         poster="assets/video/shveypro-promo-poster.jpg"
-        autoplay muted loop playsinline preload="auto"
+        autoplay muted loop playsinline
         data-i18n-attr="aria-label:hero_video_aria"
         aria-label="Промо-видео ШвейПро с музыкой"
       ></video>
