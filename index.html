@@ -214,6 +214,14 @@
       linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     mask-composite: intersect;
   }
+  /* Два video-элемента с одним и тем же роликом лежат друг на друге; JS (heroVideoLoop)
+     плавно перекрещивает прозрачность в конце ролика, чтобы спрятать неизбежную паузу
+     перехода цикла (seeking/waiting на границе файла) вместо резкого "заикания". */
+  .hero-video-el {
+    position: absolute; inset: 0;
+    opacity: 1;
+  }
+  .hero-video-el.is-standby { opacity: 0; }
 
   /* Языковой оверлей на промо-видео: подменяет вшитый в кадр русский текст для EN/PT,
      повторяя точную геометрию и градиент исходного рендера (hyperframes), чтобы не было шва. */
@@ -655,12 +663,20 @@
     </div>
     <div class="hero-scene">
       <video
-        id="hero-video"
+        id="hero-video-a"
+        class="hero-video-el"
         src="assets/video/shveypro-promo.mp4"
         poster="assets/video/shveypro-promo-poster.jpg"
-        autoplay muted loop playsinline
+        muted playsinline
         data-i18n-attr="aria-label:hero_video_aria"
         aria-label="Промо-видео ШвейПро с музыкой"
+      ></video>
+      <video
+        id="hero-video-b"
+        class="hero-video-el is-standby"
+        src="assets/video/shveypro-promo.mp4"
+        muted playsinline
+        aria-hidden="true"
       ></video>
       <div class="video-i18n-overlay" id="video-i18n-overlay" aria-hidden="true">
         <div class="vo-scene" id="vo-scene1">
@@ -1478,7 +1494,7 @@ function applyLanguage(lang) {
   var videoOverlay = document.getElementById('video-i18n-overlay');
   if (videoOverlay) videoOverlay.classList.toggle('is-active', lang !== 'ru');
 
-  var video = document.getElementById('hero-video');
+  var video = document.getElementById('hero-video-a');
   var soundBtn = document.getElementById('hero-sound-toggle');
   if (video && soundBtn) {
     soundBtn.setAttribute('aria-label', video.muted ? dict.sound_on_label : dict.sound_off_label);
@@ -1504,13 +1520,12 @@ var VO_SCENES = [
 ];
 
 function initVideoOverlaySync() {
-  var video = document.getElementById('hero-video');
   var overlay = document.getElementById('video-i18n-overlay');
-  if (!video || !overlay) return;
+  if (!overlay) return;
 
-  video.addEventListener('timeupdate', function () {
+  document.addEventListener('herovideo:timeupdate', function (e) {
     if (!overlay.classList.contains('is-active')) return;
-    var t = video.currentTime;
+    var t = e.detail.currentTime;
     VO_SCENES.forEach(function (scene) {
       var el = document.getElementById(scene.id);
       if (!el) return;
@@ -1519,20 +1534,103 @@ function initVideoOverlaySync() {
   });
 }
 
+/* Бесшовная петля hero-видео: два одинаковых <video>, в конце ролика активный
+   плавно гаснет (opacity + volume), а второй, уже перемотанный на начало, проступает
+   поверх него. Пауза перемотки (seeking/waiting) у зрителя остаётся за кадром, под
+   кроссфейдом, а не видна как "заикание". См. knowledge/video-playback-issues.md. */
+function setupHeroVideoLoop() {
+  var va = document.getElementById('hero-video-a');
+  var vb = document.getElementById('hero-video-b');
+  if (!va || !vb) return;
+
+  var CROSSFADE = 0.6; // сек
+  var active = va, standby = vb;
+  var swapping = false;
+
+  function emitTime(t) {
+    document.dispatchEvent(new CustomEvent('herovideo:timeupdate', { detail: { currentTime: t } }));
+  }
+
+  function startCrossfade() {
+    if (swapping) return;
+    swapping = true;
+    standby.currentTime = 0;
+    standby.muted = active.muted;
+    var p0 = standby.play();
+    if (p0 && p0.catch) p0.catch(function () {});
+
+    var startedAt = performance.now();
+    (function step() {
+      var elapsed = (performance.now() - startedAt) / 1000;
+      var p = Math.min(1, elapsed / CROSSFADE);
+      active.style.opacity = String(1 - p);
+      standby.style.opacity = String(p);
+      if (!active.muted) active.volume = Math.max(0, 1 - p);
+      if (!standby.muted) standby.volume = Math.min(1, p);
+      if (p < 1) {
+        requestAnimationFrame(step);
+      } else {
+        active.pause();
+        active.currentTime = 0;
+        active.volume = 1;
+        var prevActive = active;
+        active = standby;
+        standby = prevActive;
+        swapping = false;
+      }
+    })();
+  }
+
+  function onTimeUpdate(e) {
+    var v = e.target;
+    if (v !== active) return;
+    emitTime(v.currentTime);
+    var d = v.duration;
+    if (d && !isNaN(d) && v.currentTime >= d - CROSSFADE) startCrossfade();
+  }
+
+  function onEnded(e) {
+    // подстраховка: если timeupdate не успел поймать окно кроссфейда до конца файла
+    if (e.target === active && !swapping) startCrossfade();
+  }
+
+  [va, vb].forEach(function (v) {
+    v.addEventListener('timeupdate', onTimeUpdate);
+    v.addEventListener('ended', onEnded);
+  });
+
+  standby.pause();
+  standby.currentTime = 0;
+  standby.style.opacity = '0';
+  active.style.opacity = '1';
+  var p = active.play();
+  if (p && p.catch) p.catch(function () {});
+
+  window.__setHeroVideoMuted = function (muted) {
+    va.muted = muted;
+    vb.muted = muted;
+  };
+  window.__getHeroVideoActive = function () { return active; };
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   applyLanguage(detectInitialLang());
   document.querySelectorAll('.lang-btn').forEach(function (btn) {
     btn.addEventListener('click', function () { applyLanguage(btn.getAttribute('data-lang-btn')); });
   });
   initVideoOverlaySync();
+  setupHeroVideoLoop();
 });
 
 function toggleHeroSound() {
-  var video = document.getElementById('hero-video');
+  var video = document.getElementById('hero-video-a');
   var btn = document.getElementById('hero-sound-toggle');
-  video.muted = !video.muted;
-  if (!video.muted) {
-    video.play();
+  var nextMuted = !video.muted;
+  if (window.__setHeroVideoMuted) window.__setHeroVideoMuted(nextMuted);
+  else video.muted = nextMuted;
+  if (!nextMuted) {
+    var active = window.__getHeroVideoActive ? window.__getHeroVideoActive() : video;
+    active.play();
     btn.setAttribute('aria-label', t('sound_off_label'));
     btn.classList.add('is-unmuted');
   } else {
