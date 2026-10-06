@@ -161,7 +161,7 @@
 
   /* Hero scene: промо-видео вместо фото-композиции */
   .hero-scene {
-    position: relative; aspect-ratio: 16 / 9;
+    position: relative;
     background: transparent;
     align-self: start;
     margin-top: 8px;
@@ -170,13 +170,13 @@
     margin-right: calc(-1 * var(--bleed));
   }
   .hero-scene video {
-    width: 100%; height: 100%; object-fit: contain; display: block;
+    width: 100%; height: auto; display: block;
   }
   .hero-scene .sound-toggle {
     position: absolute; bottom: 18px; right: 18px; z-index: 2;
     width: 44px; height: 44px; border-radius: 50%; border: none;
     background: rgba(36,72,58,0.72); color: #fff; cursor: pointer;
-    display: block; backdrop-filter: blur(4px); transition: background 0.2s;
+    display: block; transition: background 0.2s;
   }
   .hero-scene .sound-toggle:hover { background: var(--dark); }
   .hero-scene .sound-toggle svg {
