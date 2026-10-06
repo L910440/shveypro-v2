@@ -113,19 +113,20 @@
   }
 
   /* Photo wake-up — soft auto zoom/pan on scroll into view (mobile + desktop) */
-  .life-photo img.photo-wake, .team-photo img.photo-wake {
+  .life-photo img.photo-wake, .team-photo img.photo-wake, .product-card .img-wrap img.photo-wake {
     transform: scale(1.16) translate3d(1.5%, -1%, 0);
     transition: transform 1.6s cubic-bezier(.16,.84,.44,1);
     will-change: transform;
   }
-  .life-photo img.photo-wake.is-awake, .team-photo img.photo-wake.is-awake { transform: none; }
+  .life-photo img.photo-wake.is-awake, .team-photo img.photo-wake.is-awake, .product-card .img-wrap img.photo-wake.is-awake { transform: none; }
   .life-card:hover .life-photo img.photo-wake,
-  .team-card:hover .team-photo img.photo-wake {
+  .team-card:hover .team-photo img.photo-wake,
+  .product-card:hover .img-wrap img.photo-wake {
     transform: scale(1.04);
     transition: transform 0.4s ease;
   }
   @media (prefers-reduced-motion: reduce) {
-    .life-photo img.photo-wake, .team-photo img.photo-wake { transform: none; transition: none; }
+    .life-photo img.photo-wake, .team-photo img.photo-wake, .product-card .img-wrap img.photo-wake { transform: none; transition: none; }
   }
 
   /* Header */
@@ -756,14 +757,14 @@
   <div class="container">
     <h2 data-i18n="products_h2">Что мы шьём</h2>
     <div class="products-grid">
-      <div class="product-card"><div class="img-wrap"><img src="assets/products/sumki.jpg" alt="Сумки на заказ" data-i18n-attr="alt:product1_alt"></div><h3 data-i18n="product1_h3">Сумки</h3><p data-i18n="product1_p">из кожи, экокожи и плотного текстиля</p></div>
-      <div class="product-card"><div class="img-wrap"><img src="assets/products/ryukzaki.jpg" alt="Рюкзаки на заказ" data-i18n-attr="alt:product2_alt"></div><h3 data-i18n="product2_h3">Рюкзаки</h3><p data-i18n="product2_p">деловые, спортивные, промо-модели</p></div>
-      <div class="product-card"><div class="img-wrap"><img src="assets/products/shoppery.jpg" alt="Шопперы на заказ" data-i18n-attr="alt:product3_alt"></div><h3 data-i18n="product3_h3">Шопперы</h3><p data-i18n="product3_p">тканевые и брендированные</p></div>
-      <div class="product-card"><div class="img-wrap"><img src="assets/products/kosmetichki.jpg" alt="Косметички на заказ" data-i18n-attr="alt:product4_alt"></div><h3 data-i18n="product4_h3">Косметички</h3><p data-i18n="product4_p">любых форм и размеров</p></div>
-      <div class="product-card"><div class="img-wrap"><img src="assets/products/chekhly.jpg" alt="Чехлы на заказ" data-i18n-attr="alt:product5_alt"></div><h3 data-i18n="product5_h3">Чехлы</h3><p data-i18n="product5_p">для техники и аксессуаров</p></div>
-      <div class="product-card"><div class="img-wrap"><img src="assets/products/organayzery.jpg" alt="Органайзеры на заказ" data-i18n-attr="alt:product6_alt"></div><h3 data-i18n="product6_h3">Органайзеры</h3><p data-i18n="product6_p">для дома, офиса, путешествий</p></div>
-      <div class="product-card"><div class="img-wrap"><img src="assets/products/korporativnaya.jpg" alt="Корпоративная продукция — набор изделий" data-i18n-attr="alt:product7_alt"></div><h3 data-i18n="product7_h3">Корпоративная продукция</h3><p data-i18n="product7_p">подарки и мерч для сотрудников и клиентов</p></div>
-      <div class="product-card"><div class="img-wrap"><img src="assets/products/individualnye.jpg" alt="Индивидуальные изделия на заказ" data-i18n-attr="alt:product8_alt"></div><h3 data-i18n="product8_h3">Индивидуальные изделия</h3><p data-i18n="product8_p">по вашему техническому заданию</p></div>
+      <div class="product-card"><div class="img-wrap"><img class="photo-wake" src="assets/products/sumki.jpg" alt="Сумки на заказ" data-i18n-attr="alt:product1_alt"></div><h3 data-i18n="product1_h3">Сумки</h3><p data-i18n="product1_p">из кожи, экокожи и плотного текстиля</p></div>
+      <div class="product-card"><div class="img-wrap"><img class="photo-wake" src="assets/products/ryukzaki.jpg" alt="Рюкзаки на заказ" data-i18n-attr="alt:product2_alt"></div><h3 data-i18n="product2_h3">Рюкзаки</h3><p data-i18n="product2_p">деловые, спортивные, промо-модели</p></div>
+      <div class="product-card"><div class="img-wrap"><img class="photo-wake" src="assets/products/shoppery.jpg" alt="Шопперы на заказ" data-i18n-attr="alt:product3_alt"></div><h3 data-i18n="product3_h3">Шопперы</h3><p data-i18n="product3_p">тканевые и брендированные</p></div>
+      <div class="product-card"><div class="img-wrap"><img class="photo-wake" src="assets/products/kosmetichki.jpg" alt="Косметички на заказ" data-i18n-attr="alt:product4_alt"></div><h3 data-i18n="product4_h3">Косметички</h3><p data-i18n="product4_p">любых форм и размеров</p></div>
+      <div class="product-card"><div class="img-wrap"><img class="photo-wake" src="assets/products/chekhly.jpg" alt="Чехлы на заказ" data-i18n-attr="alt:product5_alt"></div><h3 data-i18n="product5_h3">Чехлы</h3><p data-i18n="product5_p">для техники и аксессуаров</p></div>
+      <div class="product-card"><div class="img-wrap"><img class="photo-wake" src="assets/products/organayzery.jpg" alt="Органайзеры на заказ" data-i18n-attr="alt:product6_alt"></div><h3 data-i18n="product6_h3">Органайзеры</h3><p data-i18n="product6_p">для дома, офиса, путешествий</p></div>
+      <div class="product-card"><div class="img-wrap"><img class="photo-wake" src="assets/products/korporativnaya.jpg" alt="Корпоративная продукция — набор изделий" data-i18n-attr="alt:product7_alt"></div><h3 data-i18n="product7_h3">Корпоративная продукция</h3><p data-i18n="product7_p">подарки и мерч для сотрудников и клиентов</p></div>
+      <div class="product-card"><div class="img-wrap"><img class="photo-wake" src="assets/products/individualnye.jpg" alt="Индивидуальные изделия на заказ" data-i18n-attr="alt:product8_alt"></div><h3 data-i18n="product8_h3">Индивидуальные изделия</h3><p data-i18n="product8_p">по вашему техническому заданию</p></div>
     </div>
   </div>
 </section>
