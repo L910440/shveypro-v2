@@ -179,6 +179,14 @@
   .hero .eyebrow {
     display: inline-block; font-family: var(--font-body); font-size: 13px; font-weight: 700;
     letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 18px;
+    animation: eyebrow-float 3.2s ease-in-out infinite;
+  }
+  @keyframes eyebrow-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero .eyebrow { animation: none; }
   }
   .hero h1 {
     font-size: 50px; font-weight: 600; margin: 0 0 20px; color: var(--dark);
