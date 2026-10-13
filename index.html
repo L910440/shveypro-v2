@@ -176,17 +176,27 @@
     display: grid; grid-template-columns: 0.85fr 1.35fr; gap: 28px; align-items: start;
   }
   .hero-text { text-align: left; }
-  .hero .eyebrow {
-    display: inline-block; font-family: var(--font-body); font-size: 13px; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 18px;
-    animation: eyebrow-float 3.2s ease-in-out infinite;
+  .hero .eyebrow-wrap {
+    display: inline-block; overflow: hidden; vertical-align: middle;
+    max-width: 260px; width: 100%; margin-bottom: 18px;
   }
-  @keyframes eyebrow-float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+  .hero .eyebrow-track {
+    display: inline-flex; white-space: nowrap;
+    animation: eyebrow-marquee 9s linear infinite;
+  }
+  .hero .eyebrow-item {
+    display: inline-block; font-family: var(--font-body); font-size: 13px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-2);
+    white-space: nowrap; padding-right: 48px;
+  }
+  @keyframes eyebrow-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero .eyebrow { animation: none; }
+    .hero .eyebrow-track { animation: none; }
+    .hero .eyebrow-wrap { overflow: visible; max-width: none; }
+    .hero .eyebrow-item + .eyebrow-item { display: none; }
   }
   .hero h1 {
     font-size: 50px; font-weight: 600; margin: 0 0 20px; color: var(--dark);
@@ -656,7 +666,10 @@
 <section class="hero">
   <div class="container">
     <div class="hero-text">
-      <span class="eyebrow" data-i18n="hero_eyebrow">Производство на заказ · для бизнеса</span>
+      <span class="eyebrow-wrap"><span class="eyebrow-track">
+        <span class="eyebrow-item" data-i18n="hero_eyebrow">Производство на заказ · для бизнеса</span>
+        <span class="eyebrow-item" data-i18n="hero_eyebrow" aria-hidden="true">Производство на заказ · для бизнеса</span>
+      </span></span>
       <h1 data-i18n-html="hero_h1">Пошив сумок, рюкзаков и <em>текстильных изделий</em> на заказ для бизнеса</h1>
       <p class="sub" data-i18n="hero_sub">От макета до упакованной партии — полный цикл производства на собственных мощностях. Работаем по фото, эскизу, образцу или готовым лекалам.</p>
       <a href="#calculator" class="cta-btn" data-i18n="hero_cta">Рассчитать стоимость заказа</a>
